@@ -11,8 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class InterfazGrafica extends JFrame {
 
@@ -40,7 +40,6 @@ public class InterfazGrafica extends JFrame {
         this.cursosInscritos = cursosInscritos;
         this.listaCursos = listaCursos;
 
-        // Nuevas listas dinámicas
         this.listaFacultades = new ArrayList<>();
         this.listaProgramas = new ArrayList<>();
 
@@ -48,8 +47,8 @@ public class InterfazGrafica extends JFrame {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Botones
-        JPanel panelBotones = new JPanel(new GridLayout(8, 1, 5, 5));
+        // Panel de botones
+        JPanel panelBotones = new JPanel(new GridLayout(7, 1, 5, 5));
         panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JButton btnFacultades = new JButton("Registrar Facultad");
@@ -72,9 +71,8 @@ public class InterfazGrafica extends JFrame {
 
         add(panelBotones, BorderLayout.WEST);
 
-        // Pestañas con tablas
+        // Pestañas
         pestañas = new JTabbedPane();
-
         tablaPersonas = new JTable(new DefaultTableModel(new Object[]{"ID", "Nombres", "Apellidos", "Email"}, 0));
         tablaFacultades = new JTable(new DefaultTableModel(new Object[]{"ID", "Nombre"}, 0));
         tablaProgramas = new JTable(new DefaultTableModel(new Object[]{"ID", "Nombre", "Facultad"}, 0));
@@ -99,7 +97,6 @@ public class InterfazGrafica extends JFrame {
         btnListados.addActionListener(e -> mostrarListados());
         btnSalir.addActionListener(e -> salir());
 
-        // Confirmar cierre
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -124,6 +121,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Nombre:"));
         dialog.add(nombreField);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -137,8 +135,9 @@ public class InterfazGrafica extends JFrame {
                 JOptionPane.showMessageDialog(dialog, "El ID debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -164,6 +163,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Facultad:"));
         dialog.add(comboFacultades);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -178,8 +178,9 @@ public class InterfazGrafica extends JFrame {
                 JOptionPane.showMessageDialog(dialog, "El ID debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -203,6 +204,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Email:"));
         dialog.add(emailField);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -225,8 +227,9 @@ public class InterfazGrafica extends JFrame {
                 JOptionPane.showMessageDialog(dialog, "El ID debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -252,6 +255,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Programa:"));
         dialog.add(comboProgramas);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -260,30 +264,29 @@ public class InterfazGrafica extends JFrame {
                 Programa programa = (Programa) comboProgramas.getSelectedItem();
                 Curso curso = new Curso(id, nombre, programa, true);
                 listaCursos.add(curso);
-
                 JOptionPane.showMessageDialog(dialog, "Curso registrado con éxito.");
                 dialog.dispose();
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(dialog, "El ID debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
     private void abrirVentanaInscribirEstudiante() {
-        JDialog dialog = new JDialog(this, "Inscribir Estudiante", true);
-        dialog.setLayout(new GridLayout(5, 2, 5, 5));
-
         List<Persona> listaPersonas = personas.getListado();
-
         if (listaPersonas.isEmpty() || listaCursos.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay personas o cursos disponibles.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        JDialog dialog = new JDialog(this, "Inscribir Estudiante", true);
+        dialog.setLayout(new GridLayout(5, 2, 5, 5));
 
         JComboBox<Persona> comboPersonas = new JComboBox<>(listaPersonas.toArray(new Persona[0]));
         JComboBox<Curso> comboCursos = new JComboBox<>(listaCursos.toArray(new Curso[0]));
@@ -299,6 +302,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Semestre:"));
         dialog.add(semestreField);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -320,23 +324,23 @@ public class InterfazGrafica extends JFrame {
                 JOptionPane.showMessageDialog(dialog, "Año y semestre deben ser números.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
     private void abrirVentanaAsignarCursoProfesor() {
-        JDialog dialog = new JDialog(this, "Asignar Curso a Profesor", true);
-        dialog.setLayout(new GridLayout(5, 2, 5, 5));
-
         List<Persona> listaPersonas = personas.getListado();
-
         if (listaPersonas.isEmpty() || listaCursos.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay personas o cursos disponibles.", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
+        JDialog dialog = new JDialog(this, "Asignar Curso a Profesor", true);
+        dialog.setLayout(new GridLayout(5, 2, 5, 5));
 
         JComboBox<Persona> comboPersonas = new JComboBox<>(listaPersonas.toArray(new Persona[0]));
         JComboBox<Curso> comboCursos = new JComboBox<>(listaCursos.toArray(new Curso[0]));
@@ -352,6 +356,7 @@ public class InterfazGrafica extends JFrame {
         dialog.add(new JLabel("Semestre:"));
         dialog.add(semestreField);
 
+        JPanel panelBoton = new JPanel();
         JButton guardar = new JButton("Guardar");
         guardar.addActionListener(e -> {
             try {
@@ -374,36 +379,33 @@ public class InterfazGrafica extends JFrame {
                 JOptionPane.showMessageDialog(dialog, "Año y semestre deben ser números.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+        panelBoton.add(guardar);
+        dialog.add(panelBoton);
 
-        dialog.add(guardar);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
     }
 
     private void mostrarListados() {
-        // Personas
         DefaultTableModel modelPersonas = (DefaultTableModel) tablaPersonas.getModel();
         modelPersonas.setRowCount(0);
         for (Persona p : personas.getListado()) {
             modelPersonas.addRow(new Object[]{p.getID(), p.getNombres(), p.getApellidos(), p.getEmail()});
         }
 
-        // Facultades
         DefaultTableModel modelFacultades = (DefaultTableModel) tablaFacultades.getModel();
         modelFacultades.setRowCount(0);
         for (Facultad f : listaFacultades) {
             modelFacultades.addRow(new Object[]{f.getID(), f.getNombre()});
         }
 
-        // Programas
         DefaultTableModel modelProgramas = (DefaultTableModel) tablaProgramas.getModel();
         modelProgramas.setRowCount(0);
         for (Programa p : listaProgramas) {
             modelProgramas.addRow(new Object[]{p.getID(), p.getNombre(), p.getFacultad().getNombre()});
         }
 
-        // Cursos Profesores
         DefaultTableModel modelCursosProfes = (DefaultTableModel) tablaCursosProfesores.getModel();
         modelCursosProfes.setRowCount(0);
         for (CursoProfesor cp : cursosProfesores.imprimirListado()) {
@@ -415,7 +417,6 @@ public class InterfazGrafica extends JFrame {
             });
         }
 
-        // Inscripciones
         DefaultTableModel modelInscripciones = (DefaultTableModel) tablaInscripciones.getModel();
         modelInscripciones.setRowCount(0);
         for (Inscripcion ins : cursosInscritos.imprimirListado()) {

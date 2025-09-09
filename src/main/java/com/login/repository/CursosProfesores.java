@@ -207,7 +207,7 @@ public class CursosProfesores implements Servicios<CursoProfesor> {
         try {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
-                System.out.println("🔒 Conexión CURSOS_PROFESORES cerrada.");
+                System.out.println(" Conexión CURSOS_PROFESORES cerrada.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
