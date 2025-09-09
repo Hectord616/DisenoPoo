@@ -7,13 +7,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CursosInscritos implements Servicios {
+public class CursosInscritos implements Servicios<Inscripcion> {
     private final List<Inscripcion> listado = new ArrayList<>();
     private Connection conn;
 
     private static final String DB_URL = "jdbc:h2:file:./data/universidad;AUTO_SERVER=TRUE";
 
-    private final Programa programa; // ✅ Se recibe desde Main
+    private final Programa programa; //  Se recibe desde Main
 
     public CursosInscritos(Programa programa) {
         this.programa = programa;
@@ -31,6 +31,7 @@ public class CursosInscritos implements Servicios {
                     "CURSO_ID INT, ESTUDIANTE_ID DOUBLE, ANIO INT, SEMESTRE INT, " +
                     "PRIMARY KEY (CURSO_ID, ESTUDIANTE_ID))");
 
+            // Datos iniciales ejemplo
             stmt.execute("MERGE INTO INSCRIPCIONES (CURSO_ID, ESTUDIANTE_ID, ANIO, SEMESTRE) " +
                     "VALUES (101, 3, 2024, 1)");
             stmt.execute("MERGE INTO INSCRIPCIONES (CURSO_ID, ESTUDIANTE_ID, ANIO, SEMESTRE) " +
@@ -41,7 +42,7 @@ public class CursosInscritos implements Servicios {
                 int cursoId = rs.getInt("CURSO_ID");
                 double estudianteId = rs.getDouble("ESTUDIANTE_ID");
 
-                // Buscar curso existente
+                // Buscar curso existente en la lista pasada
                 Curso curso = cursos.stream()
                         .filter(c -> c.getID() == cursoId)
                         .findFirst()
@@ -50,7 +51,7 @@ public class CursosInscritos implements Servicios {
                                 (cursoId == 101) ? "Matemáticas Básicas" :
                                         (cursoId == 102) ? "Programación I" :
                                                 "Curso genérico",
-                                programa, // ✅ Usa el programa recibido
+                                programa,
                                 true
                         ));
 
@@ -70,7 +71,7 @@ public class CursosInscritos implements Servicios {
                             personaAsociada.getApellidos(),
                             personaAsociada.getEmail(),
                             personaAsociada.getID(),
-                            programa, // ✅ Usa el programa recibido
+                            programa,
                             true,
                             0.0
                     );
@@ -81,7 +82,7 @@ public class CursosInscritos implements Servicios {
                             "Desconocido",
                             "",
                             estudianteId,
-                            programa, // ✅ Usa el programa recibido
+                            programa,
                             true,
                             3.0
                     );
@@ -97,94 +98,114 @@ public class CursosInscritos implements Servicios {
             }
             rs.close();
             stmt.close();
+            System.out.println("INSCRIPCIONES cargadas: " + listado.size());
         } catch (Exception e) {
+            System.err.println("Error al cargar INSCRIPCIONES:");
             e.printStackTrace();
         }
     }
 
-    // --- Métodos CRUD iguales (inscribir, eliminar, actualizar, etc.) ---
+    // --- Métodos CRUD ---
 
     public void inscribir(Inscripcion inscripcion) {
         try {
-            PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO INSCRIPCIONES VALUES (?, ?, ?, ?)");
-            ps.setInt(1, inscripcion.getCurso().getID());
-            ps.setDouble(2, inscripcion.getEstudiante().getID());
-            ps.setInt(3, inscripcion.getAño());
-            ps.setInt(4, inscripcion.getSemestre());
-            ps.executeUpdate();
-            ps.close();
-
+            if (conn == null || conn.isClosed()) {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection(DB_URL, "sa", "");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO INSCRIPCIONES (CURSO_ID, ESTUDIANTE_ID, ANIO, SEMESTRE) VALUES (?, ?, ?, ?)")) {
+                ps.setInt(1, inscripcion.getCurso().getID());
+                ps.setDouble(2, inscripcion.getEstudiante().getID());
+                ps.setInt(3, inscripcion.getAño());
+                ps.setInt(4, inscripcion.getSemestre());
+                ps.executeUpdate();
+            }
             listado.add(inscripcion);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void eliminar(Inscripcion inscripcion) {
         try {
-            PreparedStatement ps = conn.prepareStatement(
-                    "DELETE FROM INSCRIPCIONES WHERE CURSO_ID=? AND ESTUDIANTE_ID=? AND ANIO=? AND SEMESTRE=?");
-            ps.setInt(1, inscripcion.getCurso().getID());
-            ps.setDouble(2, inscripcion.getEstudiante().getID());
-            ps.setInt(3, inscripcion.getAño());
-            ps.setInt(4, inscripcion.getSemestre());
-            ps.executeUpdate();
-            ps.close();
-
-            listado.remove(inscripcion);
-        } catch (SQLException e) {
+            if (conn == null || conn.isClosed()) {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection(DB_URL, "sa", "");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "DELETE FROM INSCRIPCIONES WHERE CURSO_ID=? AND ESTUDIANTE_ID=? AND ANIO=? AND SEMESTRE=?")) {
+                ps.setInt(1, inscripcion.getCurso().getID());
+                ps.setDouble(2, inscripcion.getEstudiante().getID());
+                ps.setInt(3, inscripcion.getAño());
+                ps.setInt(4, inscripcion.getSemestre());
+                ps.executeUpdate();
+            }
+            listado.removeIf(i ->
+                    i.getCurso().getID() == inscripcion.getCurso().getID()
+                            && i.getEstudiante().getID() == inscripcion.getEstudiante().getID()
+                            && i.getAño() == inscripcion.getAño()
+                            && i.getSemestre() == inscripcion.getSemestre());
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void actualizar(Inscripcion inscripcion) {
         try {
-            PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE INSCRIPCIONES SET ANIO=?, SEMESTRE=? WHERE CURSO_ID=? AND ESTUDIANTE_ID=?");
-            ps.setInt(1, inscripcion.getAño());
-            ps.setInt(2, inscripcion.getSemestre());
-            ps.setInt(3, inscripcion.getCurso().getID());
-            ps.setDouble(4, inscripcion.getEstudiante().getID());
-            ps.executeUpdate();
-            ps.close();
+            if (conn == null || conn.isClosed()) {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection(DB_URL, "sa", "");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE INSCRIPCIONES SET ANIO=?, SEMESTRE=? WHERE CURSO_ID=? AND ESTUDIANTE_ID=?")) {
+                ps.setInt(1, inscripcion.getAño());
+                ps.setInt(2, inscripcion.getSemestre());
+                ps.setInt(3, inscripcion.getCurso().getID());
+                ps.setDouble(4, inscripcion.getEstudiante().getID());
+                ps.executeUpdate();
+            }
 
             for (int i = 0; i < listado.size(); i++) {
-                if (listado.get(i).getCurso().getID() == inscripcion.getCurso().getID() &&
-                        listado.get(i).getEstudiante().getID() == inscripcion.getEstudiante().getID()) {
+                Inscripcion cur = listado.get(i);
+                if (cur.getCurso().getID() == inscripcion.getCurso().getID() &&
+                        cur.getEstudiante().getID() == inscripcion.getEstudiante().getID()) {
                     listado.set(i, inscripcion);
                     break;
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     public void guardarInformacion(Inscripcion inscripcion) {
         try {
-            PreparedStatement ps = conn.prepareStatement(
-                    "MERGE INTO INSCRIPCIONES (CURSO_ID, ESTUDIANTE_ID, ANIO, SEMESTRE) KEY(CURSO_ID, ESTUDIANTE_ID) VALUES (?, ?, ?, ?)");
-            ps.setInt(1, inscripcion.getCurso().getID());
-            ps.setDouble(2, inscripcion.getEstudiante().getID());
-            ps.setInt(3, inscripcion.getAño());
-            ps.setInt(4, inscripcion.getSemestre());
-            ps.executeUpdate();
-            ps.close();
+            if (conn == null || conn.isClosed()) {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection(DB_URL, "sa", "");
+            }
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "MERGE INTO INSCRIPCIONES (CURSO_ID, ESTUDIANTE_ID, ANIO, SEMESTRE) KEY(CURSO_ID, ESTUDIANTE_ID) VALUES (?, ?, ?, ?)")) {
+                ps.setInt(1, inscripcion.getCurso().getID());
+                ps.setDouble(2, inscripcion.getEstudiante().getID());
+                ps.setInt(3, inscripcion.getAño());
+                ps.setInt(4, inscripcion.getSemestre());
+                ps.executeUpdate();
+            }
 
             boolean updated = false;
             for (int i = 0; i < listado.size(); i++) {
-                if (listado.get(i).getCurso().getID() == inscripcion.getCurso().getID() &&
-                        listado.get(i).getEstudiante().getID() == inscripcion.getEstudiante().getID()) {
+                Inscripcion cur = listado.get(i);
+                if (cur.getCurso().getID() == inscripcion.getCurso().getID() &&
+                        cur.getEstudiante().getID() == inscripcion.getEstudiante().getID()) {
                     listado.set(i, inscripcion);
                     updated = true;
                     break;
                 }
             }
-            if (!updated)
-                listado.add(inscripcion);
-
-        } catch (SQLException e) {
+            if (!updated) listado.add(inscripcion);
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -203,37 +224,39 @@ public class CursosInscritos implements Servicios {
     }
 
     @Override
-    public List<String> imprimirListado() {
-        List<String> result = new ArrayList<>();
-        for (Inscripcion i : listado) {
-            result.add(i.toString());
-        }
-        return result;
+    public List<Inscripcion> imprimirListado() {
+        return new ArrayList<>(listado);
     }
 
     public void imprimirBaseDeDatos() {
         try {
-            Statement stmt = conn.createStatement();
-            System.out.println("\n=== TABLA INSCRIPCIONES ===");
-            ResultSet rs = stmt.executeQuery("SELECT * FROM INSCRIPCIONES");
-            while (rs.next()) {
-                System.out.println(
-                        "CursoID=" + rs.getInt("CURSO_ID") +
-                                ", EstudianteID=" + rs.getDouble("ESTUDIANTE_ID") +
-                                ", Año=" + rs.getInt("ANIO") +
-                                ", Semestre=" + rs.getInt("SEMESTRE"));
+            if (conn == null || conn.isClosed()) {
+                Class.forName("org.h2.Driver");
+                conn = DriverManager.getConnection(DB_URL, "sa", "");
             }
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
+            try (Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery("SELECT * FROM INSCRIPCIONES")) {
+                System.out.println("\n=== TABLA INSCRIPCIONES ===");
+                while (rs.next()) {
+                    System.out.println(
+                            "CursoID=" + rs.getInt("CURSO_ID") +
+                                    ", EstudianteID=" + rs.getDouble("ESTUDIANTE_ID") +
+                                    ", Año=" + rs.getInt("ANIO") +
+                                    ", Semestre=" + rs.getInt("SEMESTRE")
+                    );
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void cerrarConexion() {
         try {
-            if (conn != null)
+            if (conn != null && !conn.isClosed()) {
                 conn.close();
+                System.out.println("🔒 Conexión INSCRIPCIONES cerrada.");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

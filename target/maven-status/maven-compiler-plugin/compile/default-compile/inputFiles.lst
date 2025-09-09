@@ -1,14 +1,17 @@
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\service\Servicios.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\repository\CursosInscritos.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\Main.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Facultad.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Profesor.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Persona.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\repository\InscripcionesPersonas.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Inscripcion.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\repository\CursosProfesores.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\views\InterfazGrafica.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Estudiante.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Programa.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\CursoProfesor.java
-C:\Users\HECTOR\Desktop\DisenoPoo-lab2 definitivo\src\main\java\com\login\model\Curso.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\CursosProfesores.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\service\Servicios.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Profesor.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Curso.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Facultad.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\views\InterfazGrafica.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Programa.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\CursosRepository.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Estudiante.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\CursosInscritos.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\CursoProfesor.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\Main.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\FacultadesRepository.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\InscripcionesPersonas.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\repository\ProgramasRepository.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Inscripcion.java
+C:\Users\HECTOR\Desktop\organizar\TA\lab3\DisenoPoo\src\main\java\com\login\model\Persona.java

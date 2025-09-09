@@ -47,7 +47,7 @@ public class Main {
      * Método principal que inicia la aplicación.
      */
     public static void main(String[] args) {
-        System.out.println("=== Aplicación Universitaria (GUI) ===");
+        System.out.println("=== Aplicación Universitaria (GUI + Consola) ===");
 
         // Repositorios
         InscripcionesPersonas personas = new InscripcionesPersonas();
@@ -62,19 +62,62 @@ public class Main {
         cursosInscritos.cargarDatos(listaPersonas, listaCursos);
 
         // Verificar que los datos se cargaron
-        System.out.println("✅ Personas cargadas: " + personas.cantidadActual());
-        System.out.println("✅ Cursos asignados a profesores: " + cursosProfesores.cantidadActual());
-        System.out.println("✅ Inscripciones de estudiantes: " + cursosInscritos.cantidadActual());
+        System.out.println(" Personas cargadas: " + personas.cantidadActual());
+        System.out.println(" Cursos asignados a profesores: " + cursosProfesores.cantidadActual());
+        System.out.println(" Inscripciones de estudiantes: " + cursosInscritos.cantidadActual());
 
-        // Iniciar interfaz gráfica en el hilo de eventos de Swing
-        SwingUtilities.invokeLater(() -> {
-            try {
-                new InterfazGrafica(personas, cursosProfesores, cursosInscritos, listaCursos);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Error al iniciar la interfaz: " + e.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
+        // Hilo para la interfaz gráfica
+        Thread guiThread = new Thread(() -> {
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    new InterfazGrafica(personas, cursosProfesores, cursosInscritos, listaCursos);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al iniciar la interfaz: " + e.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            });
         });
+        guiThread.start();
+
+        // Hilo para la consola
+        Thread consolaThread = new Thread(() -> {
+            ejecutarConsola(personas, cursosProfesores, cursosInscritos, listaCursos);
+        });
+        consolaThread.start();
+    }
+
+    /**
+     * Método para ejecutar la lógica de la aplicación por consola.
+     */
+    public static void ejecutarConsola(
+            InscripcionesPersonas personas,
+            CursosProfesores cursosProfesores,
+            CursosInscritos cursosInscritos,
+            List<Curso> listaCursos) {
+        // Aquí puedes implementar el menú y la lógica de la consola
+        System.out.println("=== Modo Consola Activo ===");
+        // Ejemplo simple:
+        System.out.println("Ingrese 'salir' para terminar la consola.");
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        String input;
+        do {
+            System.out.print("> ");
+            input = scanner.nextLine();
+            if ("personas".equalsIgnoreCase(input)) {
+                System.out.println("Listado de personas:");
+                for (Persona p : personas.getListado()) {
+                    System.out.println(p);
+                }
+            } else if ("cursos".equalsIgnoreCase(input)) {
+                System.out.println("Listado de cursos:");
+                for (Curso c : listaCursos) {
+                    System.out.println(c);
+                }
+            } else if (!"salir".equalsIgnoreCase(input)) {
+                System.out.println("Comando no reconocido.");
+            }
+        } while (!"salir".equalsIgnoreCase(input));
+        System.out.println("Cerrando modo consola...");
     }
 }
